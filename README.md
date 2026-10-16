@@ -112,6 +112,12 @@ El workflow `.github/workflows/ci.yml` corre en cada push y pull request: lint �
 quality gate → pruebas del modelo → monitoreo de humo → imagen Docker + prueba de humo.
 En los pull requests publica en el resumen del job la **diferencia de métricas y parámetros** con la rama base.
 
+> **Datos en la CI.** Desde el Reto 03 el pipeline lee `data/raw/crm_extracto.csv`. Si el runner no
+> puede leer el remoto DVC del equipo, la CI genera un extracto sintético sin defectos con el mismo
+> esquema (`scripts/extracto_sintetico.py`): verifica que el pipeline funcione, no la calidad del modelo
+> real. Para usar el extracto real en la CI, configure un remoto en la nube y sus credenciales en
+> *Secrets* (decisión del Reto 04).
+>
 > El quality gate en CI solo aplica umbrales absolutos (el registro de MLflow del runner es temporal).
 > La comparación contra `@champion` se hace al promover desde el servidor MLflow del equipo.
 

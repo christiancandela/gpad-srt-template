@@ -41,8 +41,17 @@ jobs:
       - name: Pruebas unitarias y de contrato de datos
         run: uv run pytest -m "not model"
 
-      # Si sus datos están en un remoto DVC, agregue antes: `uv run dvc pull` con las credenciales
-      # guardadas como secretos del repositorio.
+      # Desde el Reto 03 el pipeline lee data/raw/crm_extracto.csv (DVC). Si el runner puede leer el
+      # remoto (credenciales en Secrets) se descarga; si no, se usa un extracto sintético SIN defectos
+      # con el mismo esquema: la CI verifica el pipeline, no la calidad del modelo real (Reto 04).
+      - name: Datos del pipeline
+        run: |
+          if [ -f data/raw/crm_extracto.csv.dvc ]; then
+            uv run dvc pull data/raw/crm_extracto.csv.dvc \
+              || { echo "::notice::Sin acceso al remoto DVC: extracto sintético"; \
+                   uv run python -m scripts.extracto_sintetico; }
+          fi
+
       - name: Pipeline reproducible (dvc repro)
         run: uv run dvc repro
 
