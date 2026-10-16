@@ -63,7 +63,8 @@ uv run dvc metrics diff main   # comparar con otra rama o tag
 Experimente cambiando `params.yaml` (por ejemplo `model.type: random_forest`) y vuelva a ejecutar `dvc repro`.
 
 ### Métricas que produce `evaluate` (`metrics.json`)
-- **Técnicas:** `roc_auc`, `pr_auc`, `precision`, `recall`, `f1` (con el umbral de decisión de `params.yaml`).
+- **Técnicas:** `roc_auc`, `pr_auc`, `precision`, `recall`, `f1` (con el umbral de decisión `model.decision_threshold`).
+- **Calidad para el gate:** `recall_at_eval`, `precision_at_eval` (al umbral fijo `gate.eval_threshold`).
 - **Equidad:** `recall_gap_senior_citizen` (diferencia de recall entre grupos).
 - **Negocio (estimado):** ahorro neto de la campaña de retención vs. contactar al azar (`business` en `params.yaml`).
 
@@ -82,6 +83,11 @@ Ciclo de vida con **aliases** (MLflow 3 ya no usa *stages*):
 | `@challenger` | último modelo entrenado | `src/train.py` |
 | `@champion` | modelo aprobado para producción | `scripts/promote.py` (solo si pasa el quality gate) |
 | `@previous` | champion anterior, para rollback | `scripts/promote.py` |
+
+> **El gate juzga el modelo, no la decisión.** Recall y precisión del gate se miden al umbral fijo
+> `gate.eval_threshold` (0.30), igual para todas las versiones. El umbral de decisión
+> (`model.decision_threshold`) lo fija el Sponsor según la capacidad del call center y la equidad
+> (Reto 06): moverlo cambia a quién se llama, no si el modelo es bueno.
 
 ```bash
 uv run python -m scripts.quality_gate        # solo evaluar (reports/gate.json)

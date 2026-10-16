@@ -1,7 +1,10 @@
 """Quality gate: decide si el modelo @challenger puede promoverse a @champion.
 
 Reglas (params.yaml → gate):
-1. Umbrales absolutos: ROC-AUC, recall y precisión mínimos.
+1. Umbrales absolutos: ROC-AUC mínimo, y recall y precisión mínimos medidos al umbral de evaluación
+   fijo `gate.eval_threshold` (métricas `recall_at_eval` y `precision_at_eval`). El gate juzga la
+   calidad del modelo; el umbral de decisión (`model.decision_threshold`) es una decisión del Sponsor
+   y no interviene aquí.
 2. No regresión: el ROC-AUC del challenger no puede caer más de `max_drop_vs_champion`
    frente al @champion actual (si existe en el registro de MLflow).
 
@@ -35,10 +38,16 @@ def evaluate_gate() -> dict:
     meta = json.loads(MODEL_META.read_text())
     checks = []
 
-    for metric, key in [("roc_auc", "min_roc_auc"), ("recall", "min_recall"), ("precision", "min_precision")]:
+    rules = [
+        ("roc_auc", "min_roc_auc"),
+        ("recall_at_eval", "min_recall"),
+        ("precision_at_eval", "min_precision"),
+    ]
+    for metric, key in rules:
+        suffix = f" (umbral {gate['eval_threshold']})" if metric.endswith("_at_eval") else ""
         checks.append(
             {
-                "rule": f"{metric} >= {gate[key]}",
+                "rule": f"{metric} >= {gate[key]}{suffix}",
                 "value": metrics[metric],
                 "passed": metrics[metric] >= gate[key],
             }

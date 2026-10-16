@@ -40,10 +40,14 @@ mlflow:
   registered_model: gpad-churn-model
 
 # Quality gate: condiciones mínimas para promover un modelo de @challenger a @champion.
+# El gate juzga la CALIDAD DEL MODELO, no la decisión de negocio: recall y precisión se miden a un
+# umbral de evaluación fijo (eval_threshold), no a model.decision_threshold. El umbral de decisión lo
+# fija el Sponsor según la capacidad del call center (Reto 06) y no puede hacer fallar el gate.
 gate:
+  eval_threshold: 0.30         # umbral fijo con el que se comparan todas las versiones
   min_roc_auc: 0.75
-  min_recall: 0.70
-  min_precision: 0.45
+  min_recall: 0.70             # recall_at_eval (al eval_threshold)
+  min_precision: 0.45          # precision_at_eval (al eval_threshold)
   max_drop_vs_champion: 0.01   # caída máxima de ROC-AUC tolerada frente al @champion actual
 
 monitoring:
@@ -57,7 +61,8 @@ llm:
     anthropic: claude-opus-5-5
   prompt_version: v1          # archivo prompts/explicacion_<version>.md
   top_factors: 3              # factores que se entregan al LLM
-  exclude: [senior_citizen]  # variables que el asistente nunca menciona (atributo sensible)
+  exclude:                   # variables que el asistente nunca menciona (atributo sensible)
+  - senior_citizen
   max_words: 90               # longitud máxima de la explicación (guardrail)
   eval_cases: 15              # casos de evaluación (muestra fija de test.csv, semilla 42)
   # Precios por millón de tokens para estimar costos (USD). Actualícelos según el proveedor.

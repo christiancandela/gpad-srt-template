@@ -57,6 +57,7 @@ stages:
     params:
       - business
       - model.decision_threshold
+      - gate.eval_threshold
     metrics:
       - metrics.json:
           cache: false

@@ -111,7 +111,7 @@ stages:
       size: 4257
     - path: models/model_meta.json
       hash: md5
-      md5: bb546359b177d64703514ee76be45a2d
+      md5: f8bdc2b94ff651d5c3ae98e5bedaa743
       size: 280
   evaluate:
     cmd: python -m src.evaluate
@@ -126,12 +126,12 @@ stages:
       size: 4257
     - path: models/model_meta.json
       hash: md5
-      md5: bb546359b177d64703514ee76be45a2d
+      md5: f8bdc2b94ff651d5c3ae98e5bedaa743
       size: 280
     - path: src/evaluate.py
       hash: md5
-      md5: f72537094cea263be3b13ce6a1f76c4a
-      size: 3574
+      md5: 438368d4e5fbd43747c5112a0af5ce3a
+      size: 3919
     params:
       params.yaml:
         business:
@@ -139,12 +139,13 @@ stages:
           contact_cost: 25.0
           retention_success_rate: 0.3
           weekly_capacity: 600
+        gate.eval_threshold: 0.3
         model.decision_threshold: 0.35
     outs:
     - path: metrics.json
       hash: md5
-      md5: 5cef6e6d0d29d26b128c30ae580c18e3
-      size: 273
+      md5: 2f0d5b0a7c9c4219be9f7d3937228d4c
+      size: 332
     - path: reports/confusion_matrix.png
       hash: md5
       md5: 58b7cd53c07e179d647ffe6dcbd369cd

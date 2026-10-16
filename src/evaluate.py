@@ -70,6 +70,9 @@ def main():
     y_true = test[TARGET]
     y_score = model.predict_proba(test[FEATURES])[:, 1]
     y_pred = (y_score >= threshold).astype(int)
+    # Calidad del modelo a un umbral fijo (insumo del quality gate), independiente de la decisión.
+    eval_threshold = params["gate"]["eval_threshold"]
+    y_eval = (y_score >= eval_threshold).astype(int)
 
     metrics = {
         "roc_auc": round(roc_auc_score(y_true, y_score), 4),
@@ -77,6 +80,8 @@ def main():
         "precision": round(precision_score(y_true, y_pred), 4),
         "recall": round(recall_score(y_true, y_pred), 4),
         "f1": round(f1_score(y_true, y_pred), 4),
+        "recall_at_eval": round(recall_score(y_true, y_eval), 4),
+        "precision_at_eval": round(precision_score(y_true, y_eval), 4),
         "recall_gap_senior_citizen": group_recall_gap(test, y_pred, "senior_citizen"),
         **business_impact(y_true.to_numpy(), y_pred, params["business"]),
     }
