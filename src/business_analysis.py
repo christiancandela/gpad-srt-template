@@ -19,10 +19,10 @@ from src.common import FEATURES, MODEL_META, MODEL_PATH, REPORTS_DIR, TARGET, TE
 THRESHOLDS = np.round(np.arange(0.05, 0.96, 0.05), 2)
 
 
-def threshold_curve(y_true: np.ndarray, scores: np.ndarray, biz: dict) -> pd.DataFrame:
+def threshold_curve(y_true: np.ndarray, scores: np.ndarray, biz: dict, thresholds=THRESHOLDS) -> pd.DataFrame:
     gain = biz["customer_value"] * biz["retention_success_rate"]
     rows = []
-    for t in THRESHOLDS:
+    for t in thresholds:
         pred = scores >= t
         contacted = int(pred.sum())
         tp = int((pred & (y_true == 1)).sum())
@@ -60,7 +60,8 @@ def main():
     print(curve.to_string(index=False))
     print(
         f"\nUmbral actual {current}: ahorro "
-        f"{curve.loc[np.isclose(curve['threshold'], current), 'net_savings'].iloc[0]:,.0f}"
+        # El umbral vigente puede no estar en la grilla (p. ej. 0.37): se calcula aparte.
+        f"{threshold_curve(y, scores, biz, [current])['net_savings'].iloc[0]:,.0f}"
     )
     print(
         f"Umbral que maximiza el ahorro: {best['threshold']} → {best['net_savings']:,.0f} "

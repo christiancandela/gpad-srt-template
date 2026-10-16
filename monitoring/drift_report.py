@@ -1,8 +1,8 @@
 """Monitoreo de un lote de producción en tres niveles:
 
-1. Contrato de datos (¿el lote cumple el esquema?)            → si falla: CRÍTICO (código 2)
-2. Drift de datos con Evidently (referencia = datos de entrenamiento) → si supera el umbral: ALERTA (código 1)
-3. Desempeño del modelo, solo si el lote trae etiquetas        → si el ROC-AUC cae > 0.05: ALERTA (código 1)
+1. Contrato de datos (¿el lote cumple el esquema?)            → si falla: CRÍTICO-CONTRATO (código 2)
+2. Drift de datos con Evidently (referencia = entrenamiento)  → si supera el umbral: ALERTA-DRIFT (código 1)
+3. Desempeño, si el lote trae etiquetas      → si ROC-AUC cae > 0.05: ALERTA-DESEMPEÑO (código 1)
 
   python -m monitoring.drift_report data/production/batch_precios.csv
 
@@ -104,8 +104,8 @@ def main() -> int:
     violations = check_contract(current)
     summary["contract_violations"] = violations
     if violations:
-        summary["status"] = "CRÍTICO"
-        print("[monitor] 🛑 CRÍTICO: el lote no cumple el contrato de datos. No se debe predecir.")
+        summary["status"] = "CRÍTICO-CONTRATO"
+        print("[monitor] 🛑 CRÍTICO-CONTRATO: el lote no cumple el contrato de datos. No se debe predecir.")
         for v in violations[:10]:
             print(f"    - {v['column']}: {v['check']} → {v['failure_case']}")
         code = 2
@@ -127,9 +127,17 @@ def main() -> int:
                 f"[monitor] ROC-AUC en el lote: {perf['roc_auc_current']} "
                 f"(referencia {perf['roc_auc_baseline']})"
             )
-        alert = drift["alert"] or bool(perf and perf["alert"])
-        summary["status"] = "ALERTA" if alert else "OK"
-        verdict = "⚠️  ALERTA: aplicar el runbook" if alert else "✅ OK"
+        # Niveles canónicos del contrato del sistema (§8.1). El desempeño manda sobre el drift:
+        # si hay etiquetas y el ROC-AUC cayó, el problema ya no es una sospecha.
+        levels = []
+        if perf and perf["alert"]:
+            levels.append("ALERTA-DESEMPEÑO")
+        if drift["alert"]:
+            levels.append("ALERTA-DRIFT")
+        alert = bool(levels)
+        summary["status"] = levels[0] if levels else "OK"
+        summary["levels"] = levels
+        verdict = f"⚠️  {' + '.join(levels)}: aplicar el runbook" if alert else "✅ OK"
         print(f"[monitor] {verdict}  ·  reporte: {html.relative_to(REPORTS_DIR.parent)}")
         code = 1 if alert else 0
 

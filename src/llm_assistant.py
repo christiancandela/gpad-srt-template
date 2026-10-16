@@ -1,4 +1,4 @@
-"""Asistente de explicación con LLM (Entrega 4 · taller LLMOps de la S7).
+"""Asistente de explicación con LLM (Reto 07 · LLMOps).
 
 Convierte una predicción del modelo en una explicación en lenguaje natural para la persona
 que toma la decisión (en el caso churn, el agente del call center).
@@ -42,7 +42,7 @@ FEATURE_LABELS = {
     "contract_type": "tipo de contrato",
     "internet_service": "servicio de internet",
     "payment_method": "método de pago",
-    "monthly_charges": "cargo mensual (USD)",
+    "monthly_charges": "cargo mensual (miles de COP)",
     "support_tickets": "tickets de soporte recientes",
     "senior_citizen": "adulto mayor",
 }

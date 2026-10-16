@@ -1,6 +1,6 @@
 # Runbook de operación del modelo
 
-> Este runbook es el que el equipo sigue durante el **simulacro de incidente** (sesión 8). Ajuste los
+> Este runbook es el que el equipo sigue durante el **simulacro de incidente** (S8). Se construye en el **Reto 05**. Ajuste los
 > umbrales a su caso y justifíquelos.
 
 ## 1. Objetivos de nivel de servicio (SLO)
@@ -15,11 +15,11 @@
 ## 2. Niveles de alerta y respuesta
 | Nivel | Condición | Acción | Responsable |
 |---|---|---|---|
-| ✅ OK | Sin violaciones | Registrar el reporte | MLOps Engineer |
-| ⚠️ ALERTA – drift de datos | `drift_share ≥ umbral` | Analizar columnas afectadas con negocio; si hay etiquetas recientes, reentrenar como @challenger | Data Scientist |
-| ⚠️ ALERTA – desempeño | ROC-AUC cae > 0.05 | Reentrenar con datos recientes; si no mejora, escalar al Líder | Data Scientist |
-| 🛑 CRÍTICO – contrato | El lote viola el esquema | **No predecir**. Notificar al dueño del dato; corregir origen o actualizar contrato con aprobación | Líder + Data Steward |
-| 🛑 CRÍTICO – servicio | API caída o errores > 10 % | Rollback a la versión anterior | MLOps Engineer |
+| ✅ `OK` | Sin violaciones | Registrar el reporte | MLOps Engineer |
+| ⚠️ `ALERTA-DRIFT` | `drift_share ≥ umbral` | Analizar columnas afectadas con negocio; si hay etiquetas recientes, reentrenar como @challenger | Data Scientist |
+| ⚠️ `ALERTA-DESEMPEÑO` | ROC-AUC cae > 0.05 | Reentrenar con datos recientes; si no mejora, escalar al Líder | Data Scientist |
+| 🛑 `CRÍTICO-CONTRATO` | El lote viola el esquema | **No predecir**. Notificar al dueño del dato; corregir origen o actualizar contrato con aprobación | Líder + Data Steward |
+| 🛑 `CRÍTICO-SERVICIO` | API caída o errores > 10 % | Rollback a la versión anterior | MLOps Engineer |
 
 ## 3. Procedimientos
 

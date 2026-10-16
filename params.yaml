@@ -26,9 +26,14 @@ model:
 
 # Supuestos para estimar el impacto de negocio (KPI de negocio "estimado").
 business:
-  customer_value: 600.0        # valor de un cliente retenido (USD)
+  customer_value: 600.0        # valor de un cliente retenido (miles de COP)
   contact_cost: 25.0           # costo de contactar a un cliente en la campaña
   retention_success_rate: 0.30 # proporción de clientes en riesgo que se retienen al contactarlos
+  weekly_capacity: 600         # llamadas por semana del call center (lista del lunes, Reto 04)
+
+# Política de equidad (contrato §7.1). La ratifica el Comité en el Reto 06.
+fairness:
+  max_recall_gap_senior_citizen: 0.10
 
 mlflow:
   experiment: gpad-churn
@@ -44,7 +49,7 @@ gate:
 monitoring:
   drift_share_threshold: 0.25  # proporción de columnas con drift que dispara la alerta
 
-# Asistente de explicación con LLM (Entrega 4). Ver docs/asistente_llm.md.
+# Asistente de explicación con LLM (Reto 07). Ver docs/asistente_llm.md.
 llm:
   provider: mock              # mock (sin LLM, para CI y pruebas) | ollama (local) | anthropic (Claude API)
   model:

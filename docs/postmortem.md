@@ -9,7 +9,7 @@
 | Autor(es) del post-mortem | |
 | Líder del incidente | |
 | Estado | Resuelto / Mitigado / En seguimiento |
-| Nivel según el runbook | ✅ OK · ⚠️ ALERTA – drift · ⚠️ ALERTA – desempeño · 🛑 CRÍTICO – contrato · 🛑 CRÍTICO – servicio |
+| Nivel según el runbook | ✅ `OK` · ⚠️ `ALERTA-DRIFT` · ⚠️ `ALERTA-DESEMPEÑO` · 🛑 `CRÍTICO-CONTRATO` · 🛑 `CRÍTICO-SERVICIO` |
 | Versión del modelo afectada | `model_version` de `/health` o `models/model_meta.json` |
 | Enlace al *issue* | |
 

@@ -111,7 +111,7 @@ stages:
       size: 4257
     - path: models/model_meta.json
       hash: md5
-      md5: 9c4dce88b6190e130aaf9bd334c80403
+      md5: bb546359b177d64703514ee76be45a2d
       size: 280
   evaluate:
     cmd: python -m src.evaluate
@@ -126,7 +126,7 @@ stages:
       size: 4257
     - path: models/model_meta.json
       hash: md5
-      md5: 9c4dce88b6190e130aaf9bd334c80403
+      md5: bb546359b177d64703514ee76be45a2d
       size: 280
     - path: src/evaluate.py
       hash: md5
@@ -138,6 +138,7 @@ stages:
           customer_value: 600.0
           contact_cost: 25.0
           retention_success_rate: 0.3
+          weekly_capacity: 600
         model.decision_threshold: 0.35
     outs:
     - path: metrics.json

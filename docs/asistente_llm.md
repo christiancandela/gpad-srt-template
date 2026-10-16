@@ -1,6 +1,6 @@
 # Asistente de explicación con LLM – Ficha de operación
 
-> Producto de la **Entrega 4** (criterio *Asistente LLM*). Se construye en el taller LLMOps de la **S7**.
+> Producto del **Reto 07** (criterio *IA responsable* del Proyecto Final).
 > Complete cada sección con **evidencia** del repositorio (`reports/llm_eval.json`, MLflow, `prompts/`).
 
 ## 1. Propósito y usuario

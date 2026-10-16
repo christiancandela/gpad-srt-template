@@ -1,11 +1,19 @@
-# Plantilla MLOps – Gerencia de Proyectos de Analítica de Datos
+# Plantilla del SRT – Gerencia de Proyectos de Analítica de Datos (curso por retos)
 
-Repositorio base del **Proyecto Final** (Maestría en Ingeniería – Universidad del Quindío).
+Repositorio base del **Sistema de Retención Temprana (SRT)** de Conecta Andina S.A., el sistema que
+cada equipo construye a lo largo de los **Retos 00–07** y defiende en el **Proyecto Final**
+(Maestría en Ingeniería – Universidad del Quindío). Nombres, claves y convenciones siguen el
+*contrato del sistema* del curso.
+
+> Esta es la plantilla de la **versión por retos**. La del curso 2026 por entregas sigue en
+> `gpad-mlops-template` y no cambia.
+
 Implementa de punta a punta el ciclo de vida de un modelo de **deserción de clientes (churn)**:
 datos versionados → contrato de datos → entrenamiento registrado → quality gate → API en Docker → monitoreo de drift → runbook.
 
 Funciona sin descargar nada: los datos se generan sintéticamente (imitando *Telco Customer Churn*).
-Cada equipo reemplaza la ingesta y el contrato por los de su caso.
+En el **Reto 02** el equipo recibe el extracto CRM de su variante y en el **Reto 03** reemplaza la
+etapa sintética `ingest` por `clean → validate` sobre ese extracto.
 
 | Capacidad | Herramienta | Dónde |
 |---|---|---|
@@ -105,6 +113,7 @@ En los pull requests publica en el resumen del job la **diferencia de métricas 
 
 ```bash
 uv run uvicorn app.main:app --reload       # API local: http://localhost:8000/docs
+cp .env.example .env                       # una sola vez: defina la clave de Grafana (nunca en Git)
 docker compose up -d --build               # API + MLflow + Prometheus + Grafana
 docker compose down
 ```
@@ -114,7 +123,7 @@ docker compose down
 | API (Swagger) | http://localhost:8000/docs |
 | MLflow | http://localhost:5001 |
 | Prometheus | http://localhost:9090 |
-| Grafana (admin / admin) | http://localhost:3000 → tablero *GPAD – Operación del modelo* |
+| Grafana (usuario y clave de `.env`) | http://localhost:3000 → tablero *GPAD – Operación del modelo* |
 
 Endpoints: `GET /health` (versión servida), `POST /predict`, `GET /metrics`.
 En el stack Docker cada predicción se guarda en `data/production/predictions.csv` (insumo de monitoreo).
@@ -150,7 +159,7 @@ uv run python -m src.explain                                 # importancia por p
 
 Resultados en `reports/business/`, `reports/fairness/` y `reports/explain/`: cítelos en `docs/model_card.md`.
 
-## 8. Asistente de explicación con LLM (Entrega 4)
+## 8. Asistente de explicación con LLM (Reto 07)
 
 Convierte cada predicción en una explicación en lenguaje natural para quien toma la decisión,
 con prompt versionado, guardrails, respaldo determinista y evaluación con *quality gate*.
@@ -172,17 +181,25 @@ uv run python -m src.llm_eval --provider anthropic              # Claude API (re
 > La clave de API se lee de la variable de entorno `ANTHROPIC_API_KEY`: **nunca** la escriba en el código,
 > en `params.yaml` ni en un *commit* (`.env` está en `.gitignore`).
 
-## 9. Cómo adaptar la plantilla a su caso
+## 9. Ruta por retos
 
-1. **Ingesta** – reemplace `src/ingest.py` (descarga del dataset) o use `dvc add data/raw/<archivo>` y elimine la etapa `ingest` de `dvc.yaml`. Configure un remoto: `uv run dvc remote add -d storage <ruta-o-url>` y `uv run dvc push`.
-2. **Columnas** – actualice `src/common.py` (`TARGET`, `NUMERIC_FEATURES`, `CATEGORICAL_FEATURES`, `CATEGORIES`).
-3. **Contrato** – reescriba `contracts/churn_contract.py` y `tests/test_contract.py`.
-4. **API** – ajuste el esquema `Customer` en `app/main.py` para que coincida con el contrato.
-5. **Métricas, umbrales e impacto** – `params.yaml` (`gate`, `business`) y `src/evaluate.py` (regresión/pronóstico: cambie las métricas y use partición temporal en `src/prepare.py`).
-6. **Pruebas de comportamiento** – reescriba `tests/test_model_behavior.py` con las expectativas de su negocio.
-7. **Monitoreo** – adapte los escenarios de `src/synthetic.py` o use lotes reales en `data/production/`.
-8. **Asistente LLM** – adapte `FEATURE_LABELS` en `src/llm_assistant.py`, el prompt en `prompts/` y `llm.exclude` en `params.yaml`.
-9. **Documentación** – complete `docs/` en cada entrega y marque el repositorio con los tags `e1` … `e4`.
+| Reto | Qué cambia en este repositorio | Tag |
+|---|---|---|
+| 00 | `params.yaml → business.*` y `business.weekly_capacity` con su variante; `docs/charter.md` §1–5; `docs/decision_log.md` | `r00` |
+| 01 | `docs/charter.md` §6–8; `docs/riesgos.md` | `r01` |
+| 02 | `dvc add data/raw/crm_extracto.csv`; `contracts/` (v1, v2 bloqueante con RC-1…RC-5, advertencias); `src/clean.py`; `tests/test_contract.py`; `docs/datos_gobernanza.md` | `r02` |
+| 03 | `dvc remove ingest`; grafo `clean → validate → prepare → train → evaluate`; remoto DVC; ≥ 3 corridas; aliases; tag `baseline` | `r03` |
+| 04 | Pruebas de comportamiento desde las historias; gate negociado; `main` protegida; `src/predict_batch.py` + pruebas | `r04` |
+| 05 | `monitoring/prometheus/alerts.yml`; RC-3 en la API; `docs/runbook.md`; rollback cronometrado | `r05` |
+| 06 | `model.decision_threshold` aprobado; `fairness.max_recall_gap_senior_citizen`; `reports/business/`, `reports/fairness/`, `reports/explain/`; `docs/model_card.md` | `r06` |
+| 07 | `src/llm_assistant.py`, `prompts/explicacion_v2.md`, `reports/llm_eval.json`, `docs/asistente_llm.md` | `r07` |
+| S8 | `docs/postmortem.md`, `docs/informe_final.md` | `final` |
+
+Cada reto deja su bitácora en `docs/bitacora/reto-NN.md` (plantilla en `docs/bitacora/plantilla.md`).
+
+> Algunas pruebas de la plantilla son deliberadamente débiles (por ejemplo, la invariancia al
+> `customer_id`) y los guardrails del asistente no cubren todo: los retos piden mejorarlas. No es un
+> descuido: es material de trabajo.
 
 ## 10. Estructura
 
@@ -190,7 +207,7 @@ uv run python -m src.llm_eval --provider anthropic              # Claude API (re
 ├── app/                    API FastAPI
 ├── contracts/              contrato de datos (Pandera)
 ├── data/                   raw/ y processed/ (DVC) · production/ (lotes y log de predicciones)
-├── docs/                   charter, gobernanza, model card, runbook, decisiones, post-mortem
+├── docs/                   charter, riesgos, decisiones, gobernanza, runbook, model card, asistente, post-mortem, informe final, bitacora/
 ├── models/                 model.joblib (DVC) + model_meta.json (trazabilidad)
 ├── prompts/                prompts versionados del asistente LLM
 ├── monitoring/             drift (Evidently), lotes simulados, tráfico, Prometheus, Grafana, MLflow server

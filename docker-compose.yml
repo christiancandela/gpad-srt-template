@@ -3,7 +3,7 @@
 #   mlflow     → http://localhost:5001        (tracking + registro de modelos compartido;
 #                                             5001 porque en macOS el 5000 lo usa AirPlay)
 #   prometheus → http://localhost:9090        (recolecta /metrics de la API)
-#   grafana    → http://localhost:3000        (tablero "GPAD – Operación del modelo", usuario admin / admin)
+#   grafana    → http://localhost:3000        (tablero "GPAD – Operación del modelo", usuario y clave en .env; ver .env.example)
 #
 # Requisito: haber ejecutado `dvc repro` para que exista models/model.joblib.
 # Uso: docker compose up -d --build     ·     docker compose down
@@ -39,8 +39,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      GF_SECURITY_ADMIN_USER: admin
-      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?Defina GRAFANA_ADMIN_PASSWORD en .env (copie .env.example)}
       GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /var/lib/grafana/dashboards/gpad-api.json
     volumes:
       - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro

@@ -1,4 +1,4 @@
-# Datos y gobernanza (Entrega 2)
+# Datos y gobernanza (Reto 02)
 
 ## 1. Dataset
 Fuente · licencia · tamaño · granularidad · diccionario de variables · variable objetivo.
