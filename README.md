@@ -37,6 +37,7 @@ Requisitos: Git, [uv](https://docs.astral.sh/uv/getting-started/installation/) y
 ```bash
 git clone <url-de-su-repositorio> && cd <repositorio>
 uv sync                                   # crea .venv con Python 3.12 y las versiones exactas de uv.lock
+uv run python -m scripts.verificar_entorno   # ¿está todo listo? (Reto P – Preparación del entorno)
 uv run dvc repro                          # ingest → validate → prepare → train → evaluate
 uv run python -m scripts.promote          # quality gate y promoción a @champion
 uv run pytest                             # 29 pruebas
