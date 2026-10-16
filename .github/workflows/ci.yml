@@ -49,7 +49,8 @@ jobs:
           if [ -f data/raw/crm_extracto.csv.dvc ]; then
             uv run dvc pull data/raw/crm_extracto.csv.dvc \
               || { echo "::notice::Sin acceso al remoto DVC: extracto sintético"; \
-                   uv run python -m scripts.extracto_sintetico; }
+                   uv run python -m scripts.extracto_sintetico; \
+                   echo "DATOS_SINTETICOS=1" >> "$GITHUB_ENV"; }
           fi
 
       - name: Pipeline reproducible (dvc repro)
@@ -67,8 +68,16 @@ jobs:
         if: github.event_name == 'pull_request'
         run: |
           {
-            echo "## Cambio de métricas vs ${{ github.base_ref }}"
-            uv run dvc metrics diff "origin/${{ github.base_ref }}" --md
+            if [ "${DATOS_SINTETICOS:-0}" = "1" ]; then
+              # metrics.json de la rama base viene del extracto real: compararlo con métricas de datos
+              # sintéticos mostraría "mejoras" o "caídas" que solo son diferencia de datos.
+              echo "## ⚠️ Métricas con extracto sintético"
+              echo "La CI no tiene acceso al extracto real: la comparación de métricas con la rama base"
+              echo "no es válida. Compare localmente con \`dvc metrics diff\` sobre el extracto real."
+            else
+              echo "## Cambio de métricas vs ${{ github.base_ref }}"
+              uv run dvc metrics diff "origin/${{ github.base_ref }}" --md
+            fi
             echo "## Cambio de parámetros"
             uv run dvc params diff "origin/${{ github.base_ref }}" --md
           } >> "$GITHUB_STEP_SUMMARY"
