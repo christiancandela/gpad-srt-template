@@ -22,20 +22,22 @@
      restricción manda: la económica o la capacidad. p* no es el umbral de decisión. -->
 
 ## 3. ML Canvas (razonamiento de cada bloque)
-<!-- Reto 00 §2.3: reemplace esta tabla por la de razonamiento (Canónico · Por qué está así, citando
-     el contrato · Qué se rompería, nombrando un reto · Adaptación a la variante). -->
-| Bloque | Canvas canónico del SRT | Razonamiento del equipo | Adaptación a la variante |
-|---|---|---|---|
-| Propuesta de valor | | | |
-| Tarea de predicción | | | |
-| Decisiones | | | |
-| Haciendo predicciones | | | |
-| Recolección de datos | | | |
-| Fuentes de datos | | | |
-| Simulación de impacto | | | |
-| Construyendo modelos | | | |
-| Features | | | |
-| Monitoreo | | | |
+<!-- Reto 00 §2.3. "Por qué está así": la restricción del negocio o del contrato que obliga al bloque,
+     citando la sección (p. ej., "§5: la etiqueta llega a T + 30"). "Qué se rompería": una consecuencia
+     concreta, nombrando el reto o artefacto donde aparecería. "Adaptación a la variante": qué cambia
+     para su segmento (contrato §11) o "no cambia, porque…". -->
+| Bloque | Canónico (resumen en una línea) | Por qué está así | Qué se rompería si fuera distinto | Adaptación a la variante |
+|---|---|---|---|---|
+| Propuesta de valor | | | | |
+| Tarea de predicción | | | | |
+| Decisiones | | | | |
+| Haciendo predicciones | | | | |
+| Recolección de datos | | | | |
+| Fuentes de datos | | | | |
+| Simulación de impacto | | | | |
+| Construyendo modelos | | | | |
+| Features | | | | |
+| Monitoreo | | | | |
 
 **Bloque peor justificado y por qué** ("todos están bien justificados" no cuenta):
 
